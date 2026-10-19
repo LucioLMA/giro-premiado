@@ -47,9 +47,9 @@ h1{font-family:var(--display);font-weight:400;font-size:clamp(20px,min(6vw,4.2vh
 .icon-btn svg{width:19px;height:19px}
 .icon-btn .badge{position:absolute;top:-5px;right:-7px;background:var(--gold);color:#241500;font:700 10px var(--mono);padding:2px 5px;border-radius:999px}
 
-/* Painel: o tamanho das letras é ajustado por script para caber */
-.board{flex:none;background:var(--stage-2);border:3px solid var(--gold);border-radius:12px;padding:8px 8px 6px;box-shadow:0 0 0 4px rgba(255,200,61,.12),inset 0 0 40px rgba(0,0,0,.4)}
-.cat{text-align:center;font-weight:800;text-transform:uppercase;letter-spacing:.16em;font-size:11px;color:var(--gold);margin-bottom:6px}
+/* Painel: o tamanho das letras é ajustado por script para caber (no máximo ~14% da altura, a roda tem prioridade) */
+.board{flex:none;background:var(--stage-2);border:2px solid var(--gold);border-radius:10px;padding:6px 8px 4px;box-shadow:0 0 0 4px rgba(255,200,61,.12),inset 0 0 40px rgba(0,0,0,.4)}
+.cat{text-align:center;font-weight:800;text-transform:uppercase;letter-spacing:.16em;font-size:10px;color:var(--gold);margin-bottom:4px}
 .words{--s:34px;display:flex;flex-wrap:wrap;justify-content:center;gap:calc(var(--s)*.22) calc(var(--s)*.45)}
 .word{display:flex;gap:calc(var(--s)*.09)}
 .tile{width:var(--s);height:calc(var(--s)*1.2);display:grid;place-items:center;border-radius:calc(var(--s)*.13);
@@ -59,7 +59,7 @@ h1{font-family:var(--display);font-weight:400;font-size:clamp(20px,min(6vw,4.2vh
 .tile.flip{animation:flip .45s ease}
 .tile.sym{background:transparent;border-color:transparent;color:var(--ink);width:calc(var(--s)*.5)}
 @keyframes flip{0%{transform:rotateX(90deg);background:var(--gold)}100%{transform:none}}
-.msg{min-height:1.3em;line-height:1.3;text-align:center;margin-top:6px;font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msg{min-height:1.3em;line-height:1.3;text-align:center;margin-top:4px;font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 @media (max-height:500px){.board{padding:5px 8px 4px}.cat{margin-bottom:3px}.msg{margin-top:3px}button{height:36px}.key{height:clamp(24px,8.2vh,40px)}.solve{height:calc(clamp(24px,8.2vh,40px)*3 + 8px)}.solve input{height:36px}}
 .msg.good{color:var(--good)} .msg.bad{color:var(--bad)}
 
@@ -89,17 +89,17 @@ h1{font-family:var(--display);font-weight:400;font-size:clamp(20px,min(6vw,4.2vh
 .lives i.off{background:var(--tile-off)}
 
 .actions{display:flex;gap:8px}
-button{font:800 15px var(--body);border:none;border-radius:10px;padding:0 14px;height:clamp(40px,6vh,50px);cursor:pointer;transition:transform .1s,filter .15s;color:inherit}
+button{font:800 15px var(--body);border:none;border-radius:10px;padding:0 14px;height:clamp(38px,5.4vh,48px);cursor:pointer;transition:transform .1s,filter .15s;color:inherit}
 button:focus-visible{outline:3px solid #fff;outline-offset:2px}
 button:active:not(:disabled){transform:translateY(2px)}
 button:disabled{opacity:.35;cursor:not-allowed}
 .primary{background:var(--gold);color:#241500;box-shadow:0 3px 0 var(--gold-deep);flex:1}
 .ghost{background:var(--panel);color:var(--ink);border:1px solid var(--line)}
 .keys{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:4px}
-.key{height:clamp(30px,5.2vh,46px);padding:0;font:400 clamp(14px,2.4vh,18px) var(--display);background:var(--tile);color:#1b1240;border-radius:7px}
+.key{height:clamp(28px,4.6vh,42px);padding:0;font:400 clamp(14px,2.4vh,18px) var(--display);background:var(--tile);color:#1b1240;border-radius:7px}
 .key.hit{background:var(--good);color:#06301f}
 .key.miss{background:var(--bad);color:#3a0710}
-.solve{display:flex;gap:8px;height:calc(clamp(30px,5.2vh,46px)*3 + 8px);align-items:flex-start}
+.solve{display:flex;gap:8px;height:calc(clamp(28px,4.6vh,42px)*3 + 8px);align-items:flex-start}
 .solve input{flex:1;min-width:0;height:clamp(40px,6vh,50px);background:var(--tile);color:#1b1240;border:none;border-radius:10px;padding:0 12px;font:800 16px var(--body);text-transform:uppercase;-webkit-user-select:text;user-select:text}
 .solve button{flex:0 0 auto}
 
@@ -308,15 +308,15 @@ const cv=$("wheel"),ctx=cv.getContext("2d");
 let rot=0;const SEG=Math.PI*2/SEGS.length;
 function sizeCanvas(){
   const box=$("wheelbox"),wrap=$("wheelwrap");
-  const size=Math.max(80,Math.floor(Math.min(box.clientWidth,box.clientHeight-6,480)));
+  const size=Math.max(80,Math.floor(Math.min(box.clientWidth,box.clientHeight-6,560)));
   wrap.style.width=wrap.style.height=size+"px";wrap.style.setProperty("--w",size+"px");
   const d=window.devicePixelRatio||1;cv.width=Math.round(size*d);cv.height=Math.round(size*d);drawWheel();
 }
 /* letras do painel: maior tamanho que cabe na largura e em ~22% da altura da tela */
 function fitBoard(){
   const W=$("words");if(!W.children.length)return;
-  const maxH=Math.max(70,Math.min(innerHeight*.22,230));
-  for(let sz=48;sz>=14;sz-=1){W.style.setProperty("--s",sz+"px");if(W.scrollHeight<=maxH&&W.scrollWidth<=W.clientWidth)break}
+  const maxH=Math.max(56,Math.min(innerHeight*.14,140));
+  for(let sz=38;sz>=14;sz-=1){W.style.setProperty("--s",sz+"px");if(W.scrollHeight<=maxH&&W.scrollWidth<=W.clientWidth)break}
 }
 function layout(){fitBoard();sizeCanvas()}
 function drawWheel(){
