@@ -348,13 +348,17 @@ const buzz=()=>{tone(110,.45,"sawtooth",.08);vib([60,40,60])};
 
 function spin(){
   if(!S||S.phase!=="spin")return;S.phase="spinning";$("solveForm").hidden=true;render();
-  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const start=rot,delta=Math.PI*2*(reduce?1:4+Math.random()*3)+Math.random()*Math.PI*2,dur=reduce?600:3800+Math.random()*900,t0=performance.now();
+  /* puxa um pouco para trás, depois gira 7 a 10 voltas em 6,5 a 8 s, freando devagar */
+  const start=rot,back=0.18,wind=380;
+  const delta=Math.PI*2*(7+Math.random()*3)+Math.random()*Math.PI*2,dur=6500+Math.random()*1500,t0=performance.now();
   let last=segAt();
   (function step(t){
-    const p=Math.min(1,(t-t0)/dur),e=1-Math.pow(1-p,4);rot=start+delta*e;drawWheel();
-    const s=segAt();if(s!==last){last=s;tone(1400,.03,"square",.03)}
-    if(p<1)requestAnimationFrame(step);else land();
+    const el=t-t0;
+    if(el<wind){const q=el/wind;rot=start-back*Math.sin(q*Math.PI/2);}
+    else{const p=Math.min(1,(el-wind)/dur),e=1-Math.pow(1-p,3);rot=start-back+(delta+back)*e;}
+    drawWheel();
+    const s=segAt();if(s!==last){last=s;tone(1400,.03,"square",.03);if(el>wind+dur*.55)vib(4)}
+    if(el<wind+dur)requestAnimationFrame(step);else land();
   })(t0);
 }
 function land(){
