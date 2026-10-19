@@ -17,7 +17,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Figtree:wght@400;600;800&family=JetBrains+Mono:wght@700&display=swap">
 <style>
-/* Palco de TV: painel de letras no topo, roda à esquerda, comandos e placar à direita (empilha no celular) */
+/* Palco de TV que cabe numa tela só: cabeçalho, painel, roda (ocupa o espaço que sobra), placar e teclado.
+   Em pé: tudo em coluna. Deitado ou no computador: roda à esquerda, comandos à direita. */
 :root{
   --stage:#170f33; --stage-2:#241a4d; --panel:#2f2363; --line:#4a3c8c;
   --gold:#ffc83d; --gold-deep:#d99a00; --tile:#f4f1ff; --tile-off:#3a2f73;
@@ -29,92 +30,104 @@
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
+html,body{height:100%;margin:0;overflow:hidden;overscroll-behavior:none}
 html{background:var(--stage);-webkit-text-size-adjust:100%}
-body{margin:0;min-height:100vh;background:radial-gradient(120% 70% at 50% -10%,#3b2a85 0%,var(--stage) 60%) var(--stage);color:var(--ink);font-family:var(--body);font-size:15px;
-  padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px));
-  padding-top:max(14px,env(safe-area-inset-top,0px));padding-bottom:max(28px,env(safe-area-inset-bottom,0px));
-  -webkit-tap-highlight-color:transparent;touch-action:manipulation}
-.wrap{max-width:1080px;margin:0 auto;display:grid;gap:14px}
-header{display:flex;align-items:center;justify-content:space-between;gap:10px}
-h1{font-family:var(--display);font-weight:400;font-size:clamp(24px,5vw,44px);margin:0;letter-spacing:.01em;color:var(--gold);
-  text-shadow:0 3px 0 var(--gold-deep),0 6px 18px rgba(255,200,61,.35);line-height:1}
-.hdr-r{display:flex;gap:8px;align-items:center}
-.pill{font-family:var(--mono);font-size:12px;background:var(--panel);border:1px solid var(--line);padding:6px 10px;border-radius:999px;color:var(--muted);white-space:nowrap}
+body{background:radial-gradient(120% 70% at 50% -10%,#3b2a85 0%,var(--stage) 60%) var(--stage);color:var(--ink);font-family:var(--body);font-size:15px;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.app{height:100vh;height:100dvh;max-width:1080px;margin:0 auto;display:flex;flex-direction:column;gap:clamp(6px,1.2vh,12px);
+  padding-left:max(10px,env(safe-area-inset-left,0px));padding-right:max(10px,env(safe-area-inset-right,0px));
+  padding-top:max(8px,env(safe-area-inset-top,0px));padding-bottom:max(8px,env(safe-area-inset-bottom,0px))}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px;flex:none}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(20px,min(6vw,4.2vh),40px);margin:0;letter-spacing:.01em;color:var(--gold);
+  text-shadow:0 2px 0 var(--gold-deep),0 5px 14px rgba(255,200,61,.35);line-height:1;white-space:nowrap}
+.hdr-r{display:flex;gap:6px;align-items:center}
+.pill{font-family:var(--mono);font-size:12px;background:var(--panel);border:1px solid var(--line);padding:5px 9px;border-radius:999px;color:var(--muted);white-space:nowrap}
 .pill b{color:var(--ink)}
-.icon-btn{width:40px;height:40px;padding:0;border-radius:50%;display:grid;place-items:center;background:var(--panel);border:1px solid var(--line);color:var(--gold);position:relative}
-.icon-btn svg{width:20px;height:20px}
-.icon-btn .badge{position:absolute;top:-6px;right:-8px;background:var(--gold);color:#241500;font:700 10px var(--mono);padding:2px 5px;border-radius:999px}
+.icon-btn{width:36px;height:36px;padding:0;border-radius:50%;display:grid;place-items:center;background:var(--panel);border:1px solid var(--line);color:var(--gold);position:relative}
+.icon-btn svg{width:19px;height:19px}
+.icon-btn .badge{position:absolute;top:-5px;right:-7px;background:var(--gold);color:#241500;font:700 10px var(--mono);padding:2px 5px;border-radius:999px}
 
-/* Painel */
-.board{background:var(--stage-2);border:3px solid var(--gold);border-radius:14px;padding:14px 10px 12px;box-shadow:0 0 0 6px rgba(255,200,61,.12),inset 0 0 40px rgba(0,0,0,.4)}
-.cat{text-align:center;font-weight:800;text-transform:uppercase;letter-spacing:.18em;font-size:12px;color:var(--gold);margin-bottom:10px}
-.words{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 14px}
-.word{display:flex;gap:3px}
-.tile{--s:clamp(22px,6.4vw,46px);width:var(--s);height:calc(var(--s)*1.22);display:grid;place-items:center;border-radius:5px;
+/* Painel: o tamanho das letras é ajustado por script para caber */
+.board{flex:none;background:var(--stage-2);border:3px solid var(--gold);border-radius:12px;padding:8px 8px 6px;box-shadow:0 0 0 4px rgba(255,200,61,.12),inset 0 0 40px rgba(0,0,0,.4)}
+.cat{text-align:center;font-weight:800;text-transform:uppercase;letter-spacing:.16em;font-size:11px;color:var(--gold);margin-bottom:6px}
+.words{--s:34px;display:flex;flex-wrap:wrap;justify-content:center;gap:calc(var(--s)*.22) calc(var(--s)*.45)}
+.word{display:flex;gap:calc(var(--s)*.09)}
+.tile{width:var(--s);height:calc(var(--s)*1.2);display:grid;place-items:center;border-radius:calc(var(--s)*.13);
   background:var(--tile-off);border:1px solid var(--line);font-family:var(--display);font-size:calc(var(--s)*.6);color:#1b1240;transition:background .25s}
 .tile.on{background:var(--tile);border-color:#fff}
 .tile.shown{background:#d8d2f5;color:#5a4d9a}
 .tile.flip{animation:flip .45s ease}
-.tile.sym{background:transparent;border-color:transparent;color:var(--ink)}
+.tile.sym{background:transparent;border-color:transparent;color:var(--ink);width:calc(var(--s)*.5)}
 @keyframes flip{0%{transform:rotateX(90deg);background:var(--gold)}100%{transform:none}}
-.msg{min-height:22px;text-align:center;margin-top:10px;font-weight:600}
+.msg{min-height:1.3em;line-height:1.3;text-align:center;margin-top:6px;font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-height:500px){.board{padding:5px 8px 4px}.cat{margin-bottom:3px}.msg{margin-top:3px}button{height:36px}.key{height:clamp(24px,8.2vh,40px)}.solve{height:calc(clamp(24px,8.2vh,40px)*3 + 8px)}.solve input{height:36px}}
 .msg.good{color:var(--good)} .msg.bad{color:var(--bad)}
 
-/* Área de jogo */
-.stagearea{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:16px;align-items:start}
-@media (max-width:760px){.stagearea{grid-template-columns:1fr;gap:10px}}
-.wheelbox{position:relative;display:grid;place-items:center;padding-top:8px}
-#wheel{width:100%;max-width:400px;aspect-ratio:1;display:block;filter:drop-shadow(0 12px 30px rgba(0,0,0,.5));cursor:pointer}
-@media (max-width:760px){#wheel{max-width:min(320px,78vw)}}
-.pointer{position:absolute;top:0;left:50%;transform:translateX(-50%);border-left:15px solid transparent;border-right:15px solid transparent;border-top:28px solid var(--gold);filter:drop-shadow(0 2px 2px rgba(0,0,0,.5));z-index:2}
-.landed{margin-top:8px;font-family:var(--mono);font-size:14px;color:var(--muted);min-height:20px;text-align:center}
-.landed b{color:var(--gold);font-size:18px}
+/* Área de jogo: a roda fica com todo o espaço livre */
+.stagearea{flex:1;min-height:0;display:flex;flex-direction:column;gap:clamp(6px,1.2vh,12px)}
+.wheelbox{flex:1;min-height:90px;position:relative;display:grid;place-items:center}
+.wheelwrap{position:relative;width:200px;height:200px}
+#wheel{width:100%;height:100%;display:block;filter:drop-shadow(0 8px 22px rgba(0,0,0,.5));cursor:pointer}
+.pointer{position:absolute;top:-6px;left:50%;transform:translateX(-50%);border-left:calc(var(--w,200px)*.045) solid transparent;border-right:calc(var(--w,200px)*.045) solid transparent;border-top:calc(var(--w,200px)*.085) solid var(--gold);filter:drop-shadow(0 2px 2px rgba(0,0,0,.5));z-index:2}
+.landed{position:absolute;left:0;top:0;font-family:var(--mono);font-size:12px;color:var(--muted);background:rgba(23,15,51,.75);border:1px solid var(--line);border-radius:8px;padding:4px 8px;line-height:1.2}
+.landed b{color:var(--gold);font-size:15px;display:block}
 
-.side{display:grid;gap:12px;min-width:0}
-.players{display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));gap:8px}
-.pl{background:var(--panel);border:2px solid transparent;border-radius:10px;padding:9px 10px;display:grid;gap:3px;min-width:0}
-.pl.active{border-color:var(--gold);box-shadow:0 0 18px rgba(255,200,61,.3)}
-.pl .nm{display:flex;align-items:center;gap:6px;font-weight:800;font-size:14px;min-width:0}
+.side{flex:none;display:flex;flex-direction:column;gap:clamp(6px,1.1vh,10px);min-width:0}
+.players{display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));gap:6px}
+.pl{background:var(--panel);border:2px solid transparent;border-radius:10px;padding:6px 9px;display:grid;gap:1px;min-width:0}
+.pl.active{border-color:var(--gold);box-shadow:0 0 14px rgba(255,200,61,.3)}
+.pl .nm{display:flex;align-items:center;gap:6px;font-weight:800;font-size:13px;min-width:0}
 .pl .nm span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.pl .r{font-family:var(--mono);font-size:17px;color:var(--gold);font-variant-numeric:tabular-nums}
-.pl .t{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
-.pl .c{width:10px;height:10px;border-radius:50%;flex:none}
-.lives{display:flex;gap:4px;align-items:center;font-size:12px;color:var(--muted)}
-.lives i{width:14px;height:14px;border-radius:50%;background:var(--bad);display:inline-block}
+.pl .r{font-family:var(--mono);font-size:16px;color:var(--gold);font-variant-numeric:tabular-nums;white-space:nowrap}
+.pl .t{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.pl .c{width:9px;height:9px;border-radius:50%;flex:none}
+/* solo: placar em uma linha só */
+.pl.solo{grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:10px}
+.pl.solo .r,.pl.solo .lives{justify-self:end}
+.lives{display:flex;gap:3px;align-items:center}
+.lives i{width:11px;height:11px;border-radius:50%;background:var(--bad);display:inline-block}
 .lives i.off{background:var(--tile-off)}
 
 .actions{display:flex;gap:8px}
-button{font:800 15px var(--body);border:none;border-radius:10px;padding:13px 16px;cursor:pointer;transition:transform .1s,filter .15s;color:inherit}
+button{font:800 15px var(--body);border:none;border-radius:10px;padding:0 14px;height:clamp(40px,6vh,50px);cursor:pointer;transition:transform .1s,filter .15s;color:inherit}
 button:focus-visible{outline:3px solid #fff;outline-offset:2px}
 button:active:not(:disabled){transform:translateY(2px)}
 button:disabled{opacity:.35;cursor:not-allowed}
-.primary{background:var(--gold);color:#241500;box-shadow:0 4px 0 var(--gold-deep);flex:1}
+.primary{background:var(--gold);color:#241500;box-shadow:0 3px 0 var(--gold-deep);flex:1}
 .ghost{background:var(--panel);color:var(--ink);border:1px solid var(--line)}
-.keys{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:5px}
-.key{padding:11px 0;font:400 16px var(--display);background:var(--tile);color:#1b1240;border-radius:7px}
+.keys{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:4px}
+.key{height:clamp(30px,5.2vh,46px);padding:0;font:400 clamp(14px,2.4vh,18px) var(--display);background:var(--tile);color:#1b1240;border-radius:7px}
 .key.hit{background:var(--good);color:#06301f}
 .key.miss{background:var(--bad);color:#3a0710}
-.hint{font-size:12px;color:var(--muted);line-height:1.45}
-.solve{display:flex;gap:8px}
-.solve input{flex:1;min-width:0;background:var(--tile);color:#1b1240;border:none;border-radius:10px;padding:12px;font:800 16px var(--body);text-transform:uppercase}
+.solve{display:flex;gap:8px;height:calc(clamp(30px,5.2vh,46px)*3 + 8px);align-items:flex-start}
+.solve input{flex:1;min-width:0;height:clamp(40px,6vh,50px);background:var(--tile);color:#1b1240;border:none;border-radius:10px;padding:0 12px;font:800 16px var(--body);text-transform:uppercase;-webkit-user-select:text;user-select:text}
+.solve button{flex:0 0 auto}
 
-/* Telas por cima */
+/* Tela deitada ou computador: duas colunas */
+@media (min-aspect-ratio:1/1){
+  .stagearea{flex-direction:row}
+  .wheelbox{flex:1 1 50%;min-width:0}
+  .side{flex:1 1 50%;justify-content:center;max-width:520px}
+}
+
+/* Telas por cima (rolam se precisar) */
 .overlay{position:fixed;inset:0;background:rgba(10,6,28,.86);display:grid;place-items:center;z-index:20;overflow-y:auto;
   padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
-.card{background:var(--stage-2);border:3px solid var(--gold);border-radius:16px;padding:22px;max-width:440px;width:100%;display:grid;gap:12px;text-align:center}
+.card{background:var(--stage-2);border:3px solid var(--gold);border-radius:16px;padding:20px;max-width:440px;width:100%;display:grid;gap:12px;text-align:center}
 .card h2{font-family:var(--display);font-weight:400;color:var(--gold);margin:0;font-size:26px;text-wrap:balance;line-height:1.1}
 .card p{margin:0;color:var(--muted);line-height:1.45}
 .card .big{font-family:var(--mono);font-size:30px;color:var(--good)}
 .card .stack{display:grid;gap:10px}
-.card .mode{text-align:left;display:grid;gap:2px;padding:14px 16px}
+.card .mode{text-align:left;display:grid;gap:2px;padding:12px 16px;height:auto}
 .card .mode small{font:600 13px var(--body);opacity:.8}
 .card label{font-weight:800;text-align:left}
-.card input{background:var(--tile);color:#1b1240;border:none;border-radius:10px;padding:12px;font:800 16px var(--body);width:100%}
+.card input{background:var(--tile);color:#1b1240;border:none;border-radius:10px;padding:12px;font:800 16px var(--body);width:100%;-webkit-user-select:text;user-select:text}
+.rules{text-align:left;font-size:13px;color:var(--muted);line-height:1.45;margin:0;padding-left:18px}
 .err{color:var(--bad);font-size:13px;text-align:left}
 .me-line{font-size:13px;color:var(--muted)}
-.linkish{background:none;padding:2px 4px;color:var(--gold);font-weight:800;text-decoration:underline;font-size:13px}
+.linkish{background:none;padding:2px 4px;height:auto;color:var(--gold);font-weight:800;text-decoration:underline;font-size:13px}
 .tabs{display:flex;background:var(--panel);border-radius:10px;padding:4px;gap:4px}
-.tab{flex:1;padding:9px;font-size:14px;background:transparent;color:var(--muted)}
+.tab{flex:1;height:38px;font-size:14px;background:transparent;color:var(--muted)}
 .tab[aria-selected="true"]{background:var(--gold);color:#241500}
 .rank-list{list-style:none;margin:0;padding:0;display:grid;gap:6px;max-height:50vh;overflow-y:auto;text-align:left}
 .rank-list li{display:grid;grid-template-columns:30px minmax(0,1fr) auto;gap:10px;align-items:center;background:var(--panel);padding:9px 12px;border-radius:10px}
@@ -132,7 +145,7 @@ button:disabled{opacity:.35;cursor:not-allowed}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="app">
   <header>
     <h1>Giro Premiado</h1>
     <div class="hdr-r">
@@ -149,10 +162,12 @@ button:disabled{opacity:.35;cursor:not-allowed}
   </section>
 
   <section class="stagearea">
-    <div class="wheelbox">
-      <div class="pointer" aria-hidden="true"></div>
-      <canvas id="wheel" width="400" height="400" aria-label="Roda de prêmios. Toque para girar."></canvas>
-      <div class="landed" id="landed">Valendo: —</div>
+    <div class="wheelbox" id="wheelbox">
+      <div class="wheelwrap" id="wheelwrap">
+        <div class="pointer" aria-hidden="true"></div>
+        <canvas id="wheel" width="400" height="400" aria-label="Roda de prêmios. Toque para girar."></canvas>
+      </div>
+      <div class="landed" id="landed" hidden></div>
     </div>
 
     <div class="side">
@@ -161,12 +176,12 @@ button:disabled{opacity:.35;cursor:not-allowed}
         <button class="primary" id="spin">Girar a roda</button>
         <button class="ghost" id="solveBtn">Responder</button>
       </div>
+      <div class="keys" id="keys"></div>
       <form class="solve" id="solveForm" hidden>
         <input id="solveInput" autocomplete="off" autocapitalize="characters" enterkeyhint="send" placeholder="Digite a resposta">
-        <button class="primary" style="flex:0" type="submit">OK</button>
+        <button class="primary" type="submit">OK</button>
+        <button class="ghost" type="button" id="solveCancel">Voltar</button>
       </form>
-      <div class="keys" id="keys"></div>
-      <div class="hint" id="hint"></div>
     </div>
   </section>
 </div>
@@ -176,6 +191,11 @@ button:disabled{opacity:.35;cursor:not-allowed}
   <div class="card">
     <h2>Giro Premiado</h2>
     <p>Gire a roda, chute letras e descubra a frase escondida.</p>
+    <ul class="rules">
+      <li>Cada letra certa vale o prêmio da roda vezes quantas vezes ela aparece.</li>
+      <li>Acertar a frase dá R$ 1.000 de bônus e guarda o dinheiro da rodada.</li>
+      <li>Sozinho, você tem 5 chances por rodada: letra errada, Passa a Vez e resposta errada gastam uma.</li>
+    </ul>
     <div class="stack">
       <button class="primary mode" id="soloBtn">Jogar sozinho<small>3 rodadas · vale para o ranking</small></button>
       <button class="ghost mode" id="festaBtn">Jogar em 3 no mesmo celular<small>Modo festa · não conta no ranking</small></button>
@@ -279,14 +299,26 @@ function newRound(){
   const idx=pool[Math.floor(Math.random()*pool.length)];S.used.push(idx);store.set("giro-used",S.used.slice(-40));
   Object.assign(S,{cat:PUZZLES[idx][0],ans:PUZZLES[idx][1],guessed:[],rm:Array(S.n).fill(0),phase:"spin",val:0,fresh:[],lives:LIVES,reveal:false});
   S.cur=(S.round-1)%S.n;
-  $("landed").innerHTML="Valendo: —";
+  $("landed").hidden=true;$("solveForm").hidden=true;
   say(S.mode==="solo"?"Toque na roda ou em Girar.":`Vez de ${S.names[S.cur]}. Gire a roda!`);render();
 }
 
 /* Roda */
 const cv=$("wheel"),ctx=cv.getContext("2d");
 let rot=0;const SEG=Math.PI*2/SEGS.length;
-function sizeCanvas(){const d=window.devicePixelRatio||1;const w=cv.clientWidth||320;cv.width=Math.round(w*d);cv.height=Math.round(w*d);drawWheel()}
+function sizeCanvas(){
+  const box=$("wheelbox"),wrap=$("wheelwrap");
+  const size=Math.max(80,Math.floor(Math.min(box.clientWidth,box.clientHeight-6,480)));
+  wrap.style.width=wrap.style.height=size+"px";wrap.style.setProperty("--w",size+"px");
+  const d=window.devicePixelRatio||1;cv.width=Math.round(size*d);cv.height=Math.round(size*d);drawWheel();
+}
+/* letras do painel: maior tamanho que cabe na largura e em ~22% da altura da tela */
+function fitBoard(){
+  const W=$("words");if(!W.children.length)return;
+  const maxH=Math.max(70,Math.min(innerHeight*.22,230));
+  for(let sz=48;sz>=14;sz-=1){W.style.setProperty("--s",sz+"px");if(W.scrollHeight<=maxH&&W.scrollWidth<=W.clientWidth)break}
+}
+function layout(){fitBoard();sizeCanvas()}
 function drawWheel(){
   const W=cv.width,r=W/2,R=r*.96;ctx.clearRect(0,0,W,W);ctx.save();ctx.translate(r,r);
   ctx.beginPath();ctx.arc(0,0,r*.995,0,Math.PI*2);ctx.fillStyle="#ffc83d";ctx.fill();
@@ -327,17 +359,18 @@ function spin(){
 }
 function land(){
   const s=SEGS[segAt()];
-  if(s.k==="pass"){buzz();$("landed").innerHTML="Caiu em: <b>PASSA A VEZ</b>";miss(S.mode==="solo"?"Passa a vez: você perdeu uma chance.":`${S.names[S.cur]} passou a vez.`)}
-  else if(s.k==="lose"){buzz();$("landed").innerHTML="Caiu em: <b>PERDE TUDO</b>";S.rm[S.cur]=0;miss(S.mode==="solo"?"Perde tudo! O dinheiro da rodada zerou.":`${S.names[S.cur]} perdeu tudo da rodada!`)}
-  else{S.val=s.v;S.phase="letter";$("landed").innerHTML=`Valendo: <b>${fmt(s.v)}</b> por letra`;say(S.mode==="solo"?`Escolha uma letra valendo ${fmt(s.v)}.`:`${S.names[S.cur]}, escolha uma letra valendo ${fmt(s.v)}.`);render()}
+  if(s.k==="pass"){buzz();showLanded("Caiu em","PASSA A VEZ");miss(S.mode==="solo"?"Passa a vez! Perdeu uma chance.":`${S.names[S.cur]} passou a vez.`)}
+  else if(s.k==="lose"){buzz();showLanded("Caiu em","PERDE TUDO");S.rm[S.cur]=0;miss(S.mode==="solo"?"Perde tudo! A rodada zerou.":`${S.names[S.cur]} perdeu tudo da rodada!`)}
+  else{S.val=s.v;S.phase="letter";showLanded("Valendo por letra",fmt(s.v));say(S.mode==="solo"?`Escolha uma letra: ${fmt(s.v)} cada`:`${S.names[S.cur]}, escolha uma letra`);render()}
 }
 /* erro: no solo gasta uma chance; na festa passa para o próximo */
+function showLanded(a,b){const e=$("landed");e.replaceChildren(a,Object.assign(document.createElement("b"),{textContent:b}));e.hidden=false}
 function miss(m){
   S.val=0;
   if(S.mode==="solo"){
     S.lives--;
     if(S.lives<=0){S.phase="end";render();loseRound();return}
-    S.phase="spin";say(`${m} Restam ${S.lives} chance${S.lives>1?"s":""}.`,"bad");render();
+    S.phase="spin";say(m,"bad");render();
   }else{S.cur=(S.cur+1)%S.n;S.phase="spin";say(`${m} Vez de ${S.names[S.cur]}.`,"bad");render()}
 }
 function guess(L){
@@ -346,7 +379,7 @@ function guess(L){
   const n=[...S.ans].filter(c=>base(c)===L).length;
   if(n>0){
     ding();const won=S.val*n;S.rm[S.cur]+=won;S.fresh=[L];S.phase="spin";
-    say(`Tem ${n} letra${n>1?"s":""} ${L}! +${fmt(won)}.${S.mode==="solo"?"":` ${S.names[S.cur]} gira de novo.`}`,"good");render();
+    say(`${n}× ${L}! +${fmt(won)}${S.mode==="solo"?"":`. ${S.names[S.cur]} gira de novo`}`,"good");render();
     if(allOpen()){S.phase="end";setTimeout(()=>winRound(false),900)}
   }else{buzz();miss(`Não tem a letra ${L}.`)}
 }
@@ -356,7 +389,7 @@ function solve(txt){
   if(!clean(txt)||!S||S.phase!=="spin")return;
   $("solveForm").hidden=true;
   if(clean(txt)===clean(S.ans))winRound(true);
-  else{buzz();miss(`"${txt.toUpperCase().slice(0,40)}" não é a resposta.`)}
+  else{buzz();miss("Resposta errada!")}
 }
 function winRound(bonus){
   ding();setTimeout(ding,300);
@@ -402,16 +435,16 @@ function render(){
   $("rnum").textContent=S.round;
   $("cat").textContent="Categoria: "+S.cat;
   const W=$("words");W.replaceChildren();
-  S.ans.split(" ").forEach(w=>{const d=document.createElement("div");d.className="word";
+  S.ans.split(" ").flatMap(w=>w.split(/(?<=-)/)).forEach(w=>{const d=document.createElement("div");d.className="word";
     [...w].forEach(c=>{const t=document.createElement("div");t.className="tile";
       if(!isL(c)){t.classList.add("sym");t.textContent=c}
       else if(S.guessed.includes(base(c))){t.classList.add("on");t.textContent=c;if(S.fresh.includes(base(c)))t.classList.add("flip")}
       else if(S.reveal){t.classList.add("shown");t.textContent=c}
       d.appendChild(t)});W.appendChild(d)});
-  S.fresh=[];
+  S.fresh=[];fitBoard();
   const P=$("players");P.replaceChildren();P.style.setProperty("--n",S.n);
   for(let i=0;i<S.n;i++){
-    const d=document.createElement("div");d.className="pl"+(S.n>1&&i===S.cur&&S.phase!=="end"?" active":"");
+    const d=document.createElement("div");d.className="pl"+(S.mode==="solo"?" solo":"")+(S.n>1&&i===S.cur&&S.phase!=="end"?" active":"");
     const nm=document.createElement("div");nm.className="nm";
     const c=document.createElement("span");c.className="c";c.style.background=PCOL[i];
     const tx=document.createElement("span");tx.textContent=S.names[i];nm.append(c,tx);
@@ -428,9 +461,7 @@ function render(){
     b.disabled=S.phase!=="letter"||S.guessed.includes(L);b.onclick=()=>guess(L);K.appendChild(b)});
   $("spin").disabled=S.phase!=="spin";
   $("solveBtn").disabled=S.phase!=="spin";
-  $("hint").textContent=S.mode==="solo"
-    ?`Cada letra certa vale o prêmio da roda vezes quantas vezes aparece. Letra errada, Passa a Vez e resposta errada gastam uma chance; com ${LIVES} erros você perde a rodada. Acertar a frase dá ${fmt(BONUS)} de bônus.`
-    :`Letra certa: ganha e gira de novo. Errou ou caiu em Passa a Vez: a vez passa. Quem acerta a frase leva o dinheiro da rodada mais ${fmt(BONUS)}.`;
+  K.hidden=!$("solveForm").hidden;
 }
 
 /* Ranking online (Firebase, mesmo projeto da Forca, coleção "giro") */
@@ -545,7 +576,9 @@ $("rankClose").onclick=()=>{$("rankDlg").hidden=true};
 document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{rankTab=t.dataset.tab;store.set("giro-tab",rankTab);renderRanking()});
 $("spin").onclick=spin;
 cv.onclick=spin;
-$("solveBtn").onclick=()=>{const f=$("solveForm");f.hidden=!f.hidden;if(!f.hidden)$("solveInput").focus()};
+function setSolve(open){$("solveForm").hidden=!open;$("keys").hidden=open;if(open)$("solveInput").focus();else $("solveInput").blur()}
+$("solveBtn").onclick=()=>setSolve($("solveForm").hidden);
+$("solveCancel").onclick=()=>setSolve(false);
 $("solveForm").onsubmit=e=>{e.preventDefault();const i=$("solveInput");solve(i.value);i.value="";i.blur()};
 document.addEventListener("keydown",e=>{
   if(e.target.tagName==="INPUT"||!S)return;
@@ -554,12 +587,13 @@ document.addEventListener("keydown",e=>{
   if(/^[A-Z]$/.test(k)&&S.phase==="letter")guess(k);
   else if((e.key===" "||e.key==="Enter")&&S.phase==="spin"){e.preventDefault();spin()}
 });
-addEventListener("resize",sizeCanvas);
+addEventListener("resize",layout);
+if(window.ResizeObserver)new ResizeObserver(()=>sizeCanvas()).observe($("wheelbox"));
 
 /* Fundo de tela enquanto escolhe o modo */
 renderPlayer();
 S={mode:"solo",n:1,round:1,names:[playerName||"Você"],total:[0],used:store.get("giro-used",[])};newRound();
-sizeCanvas();document.fonts&&document.fonts.ready.then(drawWheel);
+layout();document.fonts&&document.fonts.ready.then(layout);
 renderRanking();
 </script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
